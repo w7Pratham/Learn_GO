@@ -2,7 +2,7 @@ Comprehensive notes on accessing struct fields via values vs. pointers in Go, fo
 
 Subject: Go Struct Field Access \- Values vs. Pointers  
 Date: March 27, 2025  
-Location: Pune, Maharashtra, India  
+
 **1\. Introduction**
 
 When working with structs in Go, you can interact with them either directly as *values* or indirectly through *pointers*. Accessing the fields (like X in a Vertex struct) behaves slightly differently depending on whether you have a value or a pointer, leading to potential confusion, especially around Go's convenience features and operator precedence. This note clarifies these differences.
@@ -10,14 +10,15 @@ When working with structs in Go, you can interact with them either directly as *
 **2\. Core Concepts Recap**
 
 * **Struct Value:** A variable that holds the actual struct data directly in its memory space.  
-  Go  
+  ```Go  
   type Vertex struct { X, Y int }  
   v := Vertex{X: 1, Y: 2} // v holds the {1, 2} data.
+  ```
 
 * **Struct Pointer:** A variable that holds the *memory address* where a struct's data resides.  
-  Go  
+  ```Go  
   p := \&Vertex{X: 3, Y: 4} // p holds the address of the {3, 4} data. Type is \*Vertex.
-
+  ```
 * **Field Selector (.):** The operator used to access a field within a struct (e.g., X in v.X).  
 * **Dereference Operator (\*):** When applied to a pointer, it retrieves the *value* stored at the memory address the pointer holds (e.g., \*p gives the Vertex value that p points to).
 
@@ -29,11 +30,11 @@ Let's analyze how to access field X using our Vertex struct (type Vertex struct 
 
 * **Explanation:** This is the most straightforward case. If you have a struct value (v), you use the dot (.) operator directly to access its fields.  
 * **Example:**  
-  Go  
+  ```Go  
   v := Vertex{X: 10, Y: 20}  
   xValue := v.X // Directly access X from the value v  
   fmt.Println(xValue) // Output: 10
-
+  ```
 **Scenario B: Accessing from a Struct Pointer \- The Explicit Way ((\*p).X)**
 
 * **Explanation:** If you have a pointer (p) to a struct, the logically explicit way to access a field involves two steps:  
@@ -41,20 +42,21 @@ Let's analyze how to access field X using our Vertex struct (type Vertex struct 
   2. Use the dot (.) operator on the resulting struct value to access the field.  
   * **Crucially:** You need parentheses (\*p) because the dot operator (.) has higher precedence than the dereference operator (\*). Without them, \*p.X would be parsed differently (see Scenario D).  
 * **Example:**  
-  Go  
+  ```Go  
   p := \&Vertex{X: 1, Y: 3}  
   xValue := (\*p).X // 1\. Dereference p to get Vertex{1, 3}, 2\. Access X  
   fmt.Println(xValue) // Output: 1
-
+  ```
 **Scenario C: Accessing from a Struct Pointer \- Go's Convenience (p.X)**
 
 * **Explanation:** Writing (\*p).X frequently can be tedious. Go provides a convenient shorthand: If p is a pointer to a struct, the expression p.X is automatically interpreted by the compiler as (\*p).X.  
 * **This is purely syntactic sugar.** It makes working with pointers much cleaner.  
 * **Example:**  
-  Go  
+  ```Go  
   p := \&Vertex{X: 1, Y: 3}  
   xValue := p.X // Go automatically treats this as (\*p).X  
   fmt.Println(xValue) // Output: 1
+  ```
 
 **Scenario D: The Pitfall \- Why \*p.X Fails**
 
@@ -81,7 +83,7 @@ Let's analyze how to access field X using our Vertex struct (type Vertex struct 
 
 **5\. Complete Code Example with Comments**
 
-Go
+```Go
 
 package main
 
@@ -140,6 +142,7 @@ func main() {
 	fmt.Println("  4\. Error: You cannot apply the dereference operator \`\*\` to a non-pointer type like \`int\`.")  
 	fmt.Println("-------------------------------------------")  
 }
+```
 
 **6\. Exercise**
 
